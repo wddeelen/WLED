@@ -92,55 +92,57 @@
 #endif
 
 //Usermod IDs
-#define USERMOD_ID_RESERVED               0     //Unused. Might indicate no usermod present
-#define USERMOD_ID_UNSPECIFIED            1     //Default value for a general user mod that does not specify a custom ID
-#define USERMOD_ID_EXAMPLE                2     //Usermod "usermod_v2_example.h"
-#define USERMOD_ID_TEMPERATURE            3     //Usermod "usermod_temperature.h"
-#define USERMOD_ID_FIXNETSERVICES         4     //Usermod "usermod_Fix_unreachable_netservices.h"
-#define USERMOD_ID_PIRSWITCH              5     //Usermod "usermod_PIR_sensor_switch.h"
-#define USERMOD_ID_IMU                    6     //Usermod "usermod_mpu6050_imu.h"
-#define USERMOD_ID_FOUR_LINE_DISP         7     //Usermod "usermod_v2_four_line_display.h
-#define USERMOD_ID_ROTARY_ENC_UI          8     //Usermod "usermod_v2_rotary_encoder_ui.h"
-#define USERMOD_ID_AUTO_SAVE              9     //Usermod "usermod_v2_auto_save.h"
-#define USERMOD_ID_DHT                   10     //Usermod "usermod_dht.h"
-// #define USERMOD_ID_MODE_SORT             11     //Usermod "usermod_v2_mode_sort.h"
-#define USERMOD_ID_VL53L0X               12     //Usermod "usermod_vl53l0x_gestures.h"
-#define USERMOD_ID_MULTI_RELAY           13     //Usermod "usermod_multi_relay.h"
-#define USERMOD_ID_ANIMATED_STAIRCASE    14     //Usermod "Animated_Staircase.h"
-#define USERMOD_ID_RTC                   15     //Usermod "usermod_rtc.h"
-#define USERMOD_ID_ELEKSTUBE_IPS         16     //Usermod "usermod_elekstube_ips.h"
-#define USERMOD_ID_SN_PHOTORESISTOR      17     //Usermod "usermod_sn_photoresistor.h"
-#define USERMOD_ID_BATTERY               18     //Usermod "usermod_v2_battery.h"
-#define USERMOD_ID_PWM_FAN               19     //Usermod "usermod_PWM_fan.h"
-#define USERMOD_ID_BH1750                20     //Usermod "usermod_bh1750.h"
-#define USERMOD_ID_SEVEN_SEGMENT_DISPLAY 21     //Usermod "usermod_v2_seven_segment_display.h"
-#define USERMOD_RGB_ROTARY_ENCODER       22     //Usermod "rgb-rotary-encoder.h"
-#define USERMOD_ID_QUINLED_AN_PENTA      23     //Usermod "quinled-an-penta.h"
-#define USERMOD_ID_SSDR                  24     //Usermod "usermod_v2_seven_segment_display_reloaded.h"
-#define USERMOD_ID_CRONIXIE              25     //Usermod "usermod_cronixie.h"
-#define USERMOD_ID_WIZLIGHTS             26     //Usermod "wizlights.h"
-#define USERMOD_ID_WORDCLOCK             27     //Usermod "usermod_v2_word_clock.h"
-#define USERMOD_ID_MY9291                28     //Usermod "usermod_MY9291.h"
-#define USERMOD_ID_SI7021_MQTT_HA        29     //Usermod "usermod_si7021_mqtt_ha.h"
-#define USERMOD_ID_BME280                30     //Usermod "usermod_bme280.h
-#define USERMOD_ID_SMARTNEST             31     //Usermod "usermod_smartnest.h"
-#define USERMOD_ID_AUDIOREACTIVE         32     //Usermod "audioreactive.h"
-#define USERMOD_ID_ANALOG_CLOCK          33     //Usermod "Analog_Clock.h"
-#define USERMOD_ID_PING_PONG_CLOCK       34     //Usermod "usermod_v2_ping_pong_clock.h"
-#define USERMOD_ID_ADS1115               35     //Usermod "usermod_ads1115.h"
-#define USERMOD_ID_BOBLIGHT              36     //Usermod "boblight.h"
-#define USERMOD_ID_SD_CARD               37     //Usermod "usermod_sd_card.h"
-#define USERMOD_ID_PWM_OUTPUTS           38     //Usermod "usermod_pwm_outputs.h
-#define USERMOD_ID_SHT                   39     //Usermod "usermod_sht.h
-#define USERMOD_ID_KLIPPER               40     //Usermod Klipper percentage
-#define USERMOD_ID_WIREGUARD             41     //Usermod "wireguard.h"
-#define USERMOD_ID_INTERNAL_TEMPERATURE  42     //Usermod "usermod_internal_temperature.h"
-#define USERMOD_ID_LDR_DUSK_DAWN         43     //Usermod "usermod_LDR_Dusk_Dawn_v2.h"
+#define USERMOD_ID_RESERVED                  0     //Unused. Might indicate no usermod present
+#define USERMOD_ID_UNSPECIFIED               1     //Default value for a general user mod that does not specify a custom ID
+#define USERMOD_ID_EXAMPLE                   2     //Usermod "usermod_v2_example.h"
+#define USERMOD_ID_TEMPERATURE               3     //Usermod "usermod_temperature.h"
+#define USERMOD_ID_FIXNETSERVICES            4     //Usermod "usermod_Fix_unreachable_netservices.h"
+#define USERMOD_ID_PIRSWITCH                 5     //Usermod "usermod_PIR_sensor_switch.h"
+#define USERMOD_ID_IMU                       6     //Usermod "usermod_mpu6050_imu.h"
+#define USERMOD_ID_FOUR_LINE_DISP            7     //Usermod "usermod_v2_four_line_display.h
+#define USERMOD_ID_ROTARY_ENC_UI             8     //Usermod "usermod_v2_rotary_encoder_ui.h"
+#define USERMOD_ID_AUTO_SAVE                 9     //Usermod "usermod_v2_auto_save.h"
+#define USERMOD_ID_DHT                      10     //Usermod "usermod_dht.h"
+// #define USERMOD_ID_MODE_SORT                11     //Usermod "usermod_v2_mode_sort.h"
+#define USERMOD_ID_VL53L0X                  12     //Usermod "usermod_vl53l0x_gestures.h"
+#define USERMOD_ID_MULTI_RELAY              13     //Usermod "usermod_multi_relay.h"
+#define USERMOD_ID_ANIMATED_STAIRCASE       14     //Usermod "Animated_Staircase.h"
+#define USERMOD_ID_RTC                      15     //Usermod "usermod_rtc.h"
+#define USERMOD_ID_ELEKSTUBE_IPS            16     //Usermod "usermod_elekstube_ips.h"
+#define USERMOD_ID_SN_PHOTORESISTOR         17     //Usermod "usermod_sn_photoresistor.h"
+#define USERMOD_ID_BATTERY                  18     //Usermod "usermod_v2_battery.h"
+#define USERMOD_ID_PWM_FAN                  19     //Usermod "usermod_PWM_fan.h"
+#define USERMOD_ID_BH1750                   20     //Usermod "usermod_bh1750.h"
+#define USERMOD_ID_SEVEN_SEGMENT_DISPLAY    21     //Usermod "usermod_v2_seven_segment_display.h"
+#define USERMOD_RGB_ROTARY_ENCODER          22     //Usermod "rgb-rotary-encoder.h"
+#define USERMOD_ID_QUINLED_AN_PENTA         23     //Usermod "quinled-an-penta.h"
+#define USERMOD_ID_SSDR                     24     //Usermod "usermod_v2_seven_segment_display_reloaded.h"
+#define USERMOD_ID_CRONIXIE                 25     //Usermod "usermod_cronixie.h"
+#define USERMOD_ID_WIZLIGHTS                26     //Usermod "wizlights.h"
+#define USERMOD_ID_WORDCLOCK                27     //Usermod "usermod_v2_word_clock.h"
+#define USERMOD_ID_MY9291                   28     //Usermod "usermod_MY9291.h"
+#define USERMOD_ID_SI7021_MQTT_HA           29     //Usermod "usermod_si7021_mqtt_ha.h"
+#define USERMOD_ID_BME280                   30     //Usermod "usermod_bme280.h
+#define USERMOD_ID_SMARTNEST                31     //Usermod "usermod_smartnest.h"
+#define USERMOD_ID_AUDIOREACTIVE            32     //Usermod "audioreactive.h"
+#define USERMOD_ID_ANALOG_CLOCK             33     //Usermod "Analog_Clock.h"
+#define USERMOD_ID_PING_PONG_CLOCK          34     //Usermod "usermod_v2_ping_pong_clock.h"
+#define USERMOD_ID_ADS1115                  35     //Usermod "usermod_ads1115.h"
+#define USERMOD_ID_BOBLIGHT                 36     //Usermod "boblight.h"
+#define USERMOD_ID_SD_CARD                  37     //Usermod "usermod_sd_card.h"
+#define USERMOD_ID_PWM_OUTPUTS              38     //Usermod "usermod_pwm_outputs.h
+#define USERMOD_ID_SHT                      39     //Usermod "usermod_sht.h
+#define USERMOD_ID_KLIPPER                  40     //Usermod Klipper percentage
+#define USERMOD_ID_WIREGUARD                41     //Usermod "wireguard.h"
+#define USERMOD_ID_INTERNAL_TEMPERATURE     42     //Usermod "usermod_internal_temperature.h"
+#define USERMOD_ID_LDR_DUSK_DAWN            43     //Usermod "usermod_LDR_Dusk_Dawn_v2.h"
+#define USERMOD_ID_ANIMATED_STAIRCASE_V2    44     //Usermod "Animated_Staircase_Light_v2.h"
+
 //WLEDMM
-#define USERMOD_ID_MCUTEMP               89     //Usermod "usermod_v2_artifx.h"
-#define USERMOD_ID_ARTIFX                90     //Usermod "usermod_v2_artifx.h"
-#define USERMOD_ID_WEATHER               91     //Usermod "usermod_v2_weather.h"
-#define USERMOD_ID_GAMES                 92     //Usermod "usermod_v2_games.h"
+#define USERMOD_ID_MCUTEMP                  89     //Usermod "usermod_v2_artifx.h"
+#define USERMOD_ID_ARTIFX                   90     //Usermod "usermod_v2_artifx.h"
+#define USERMOD_ID_WEATHER                  91     //Usermod "usermod_v2_weather.h"
+#define USERMOD_ID_GAMES                    92     //Usermod "usermod_v2_games.h"
 #define USERMOD_ID_ANIMARTRIX               93     //Usermod "usermod_v2_animartrix.h"
 
 //Access point behavior

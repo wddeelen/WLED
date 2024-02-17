@@ -32,44 +32,45 @@ String PinManagerClass::getPinOwnerText(int gpio) {
 
 String PinManagerClass::getOwnerText(PinOwner tag) {
   switch(tag) {
-    case PinOwner::None       : return(F("no owner")); break;       // unknown - no owner
-    case PinOwner::DebugOut   : return(F("debug output")); break;   // 'Dbg'  == debug output always IO1
-    case PinOwner::Ethernet   : return(F("Ethernet")); break;       // Ethernet
-    case PinOwner::BusDigital : return(F("LEDs (digital)")); break; // Digital LEDs
-    case PinOwner::BusPwm     : return(F("LEDs (PWM)")); break;     // PWM output using BusPwm
-    case PinOwner::BusOnOff   : return(F("LEDs (on-off)")); break;  // 
-    case PinOwner::Button     : return(F("Button")); break;         // 'Butn' == button from configuration
-    case PinOwner::IR         : return(F("IR Receiver")); break;    // 'IR'   == IR receiver pin from configuration
-    case PinOwner::Relay      : return(F("Relay")); break;          // 'Rly'  == Relay pin from configuration
+    case PinOwner::None                     : return(F("no owner")); break;                       // unknown - no owner
+    case PinOwner::DebugOut                 : return(F("debug output")); break;                   // 'Dbg'  == debug output always IO1
+    case PinOwner::Ethernet                 : return(F("Ethernet")); break;                       // Ethernet
+    case PinOwner::BusDigital               : return(F("LEDs (digital)")); break;                 // Digital LEDs
+    case PinOwner::BusPwm                   : return(F("LEDs (PWM)")); break;                     // PWM output using BusPwm
+    case PinOwner::BusOnOff                 : return(F("LEDs (on-off)")); break;                  // 
+    case PinOwner::Button                   : return(F("Button")); break;                         // 'Butn' == button from configuration
+    case PinOwner::IR                       : return(F("IR Receiver")); break;                    // 'IR'   == IR receiver pin from configuration
+    case PinOwner::Relay                    : return(F("Relay")); break;                          // 'Rly'  == Relay pin from configuration
 #if defined(ARDUINO_ESP32_PICO)
-    case PinOwner::SPI_RAM    : return(F("SPI FLASH")); break;      // PICO boards use gpio 16+17 for embedded flash, not for PSRAM
+    case PinOwner::SPI_RAM                  : return(F("SPI FLASH")); break;                      // PICO boards use gpio 16+17 for embedded flash, not for PSRAM
 #else
-    case PinOwner::SPI_RAM    : return(F("PSRAM")); break;          // 'SpiR' == SPI RAM (aka PSRAM)
+    case PinOwner::SPI_RAM                  : return(F("PSRAM")); break;                          // 'SpiR' == SPI RAM (aka PSRAM)
 #endif
-    case PinOwner::DMX        : return(F("DMX out")); break;        // 'DMX'  == hard-coded to IO2
-    case PinOwner::HW_I2C     : return(F("I2C (hw)")); break;            // 'I2C'  == hardware I2C pins (4&5 on ESP8266, 21&22 on ESP32)
-    case PinOwner::HW_SPI     : return(F("SPI (hw)")); break;            // 'SPI'  == hardware (V)SPI pins (13,14&15 on ESP8266, 5,18&23 on ESP32)
-    case PinOwner::DMX_INPUT  : return(F("DMX Input")); break;            
+    case PinOwner::DMX                      : return(F("DMX out")); break;                        // 'DMX'  == hard-coded to IO2
+    case PinOwner::HW_I2C                   : return(F("I2C (hw)")); break;                       // 'I2C'  == hardware I2C pins (4&5 on ESP8266, 21&22 on ESP32)
+    case PinOwner::HW_SPI                   : return(F("SPI (hw)")); break;                       // 'SPI'  == hardware (V)SPI pins (13,14&15 on ESP8266, 5,18&23 on ESP32)
+    case PinOwner::DMX_INPUT                : return(F("DMX Input")); break;            
 
-    case PinOwner::UM_Audioreactive     : return(F("AudioReactive (UM)")); break;     // audioreactive usermod - analog or digital audio input
-    case PinOwner::UM_Temperature       : return(F("Temperature (UM)")); break;       // "usermod_temperature.h"
-    case PinOwner::UM_PIR               : return(F("PIR (UM)")); break;               // "usermod_PIR_sensor_switch.h"
-    case PinOwner::UM_IMU               : return(F("IMU mpu6050 (UM)")); break;       // "usermod_mpu6050_imu.h"
-    case PinOwner::UM_FourLineDisplay   : return(F("4Line Display (UM)")); break;     // "usermod_v2_four_line_display.h -- May use "standard" HW_I2C pins
-    case PinOwner::UM_RotaryEncoderUI   : return(F("Rotary Enc. (UM)")); break;       // "usermod_v2_rotary_encoder_ui.h"
-    case PinOwner::UM_MultiRelay        : return(F("Multi Relay (UM)")); break;       // "usermod_multi_relay.h"
-    case PinOwner::UM_AnimatedStaircase : return(F("Anim.Staircase (UM)")); break;    // "Animated_Staircase.h"
-    case PinOwner::UM_RGBRotaryEncoder  : return(F("RGB Rotary Enc. (UM)")); break;   // "rgb-rotary-encoder.h"
-    case PinOwner::UM_QuinLEDAnPenta    : return(F("QuinLEDAnPenta (UM)")); break;    // "quinled-an-penta.h"
-    case PinOwner::UM_BME280            : return(F("BME280 (UM)")); break;            // "usermod_bme280.h" -- Uses "standard" HW_I2C pins
-    case PinOwner::UM_BH1750            : return(F("BH1750 (UM)")); break;            // "usermod_bh1750.h" -- Uses "standard" HW_I2C pins
-    case PinOwner::UM_SdCard            : return(F("SD-Card (UM)")); break;           // "usermod_sd_card.h" -- Uses SPI pins
-    case PinOwner::UM_PWM_OUTPUTS       : return(F("PWM Output (UM)")); break;        // "usermod_pwm_outputs.h"
-    case PinOwner::UM_Battery           : return(F("Battery (UM)")); break;           // "usermod_battery.h"
-    case PinOwner::UM_LDR_DUSK_DAWN     : return(F("LDR dusk/dawn (UM)")); break;     // "usermod_LDR_Dusk_Dawn_v2.h"
+    case PinOwner::UM_Audioreactive         : return(F("AudioReactive (UM)")); break;             // audioreactive usermod - analog or digital audio input
+    case PinOwner::UM_Temperature           : return(F("Temperature (UM)")); break;               // "usermod_temperature.h"
+    case PinOwner::UM_PIR                   : return(F("PIR (UM)")); break;                       // "usermod_PIR_sensor_switch.h"
+    case PinOwner::UM_IMU                   : return(F("IMU mpu6050 (UM)")); break;               // "usermod_mpu6050_imu.h"
+    case PinOwner::UM_FourLineDisplay       : return(F("4Line Display (UM)")); break;             // "usermod_v2_four_line_display.h -- May use "standard" HW_I2C pins
+    case PinOwner::UM_RotaryEncoderUI       : return(F("Rotary Enc. (UM)")); break;               // "usermod_v2_rotary_encoder_ui.h"
+    case PinOwner::UM_MultiRelay            : return(F("Multi Relay (UM)")); break;               // "usermod_multi_relay.h"
+    case PinOwner::UM_AnimatedStaircase     : return(F("Anim.Staircase (UM)")); break;            // "Animated_Staircase.h"
+    case PinOwner::UM_RGBRotaryEncoder      : return(F("RGB Rotary Enc. (UM)")); break;           // "rgb-rotary-encoder.h"
+    case PinOwner::UM_QuinLEDAnPenta        : return(F("QuinLEDAnPenta (UM)")); break;            // "quinled-an-penta.h"
+    case PinOwner::UM_BME280                : return(F("BME280 (UM)")); break;                    // "usermod_bme280.h" -- Uses "standard" HW_I2C pins
+    case PinOwner::UM_BH1750                : return(F("BH1750 (UM)")); break;                    // "usermod_bh1750.h" -- Uses "standard" HW_I2C pins
+    case PinOwner::UM_SdCard                : return(F("SD-Card (UM)")); break;                   // "usermod_sd_card.h" -- Uses SPI pins
+    case PinOwner::UM_PWM_OUTPUTS           : return(F("PWM Output (UM)")); break;                // "usermod_pwm_outputs.h"
+    case PinOwner::UM_Battery               : return(F("Battery (UM)")); break;                   // "usermod_battery.h"
+    case PinOwner::UM_LDR_DUSK_DAWN         : return(F("LDR dusk/dawn (UM)")); break;             // "usermod_LDR_Dusk_Dawn_v2.h"
 
-    case PinOwner::UM_Example      : return(F("example (UM)")); break;            // unspecified usermod
-    case PinOwner::UM_Unspecified  : return(F("usermod (UM)")); break;            // unspecified usermod
+    case PinOwner::UM_ANIMATED_STAIRCASE_V2 : return(F("Animated Staircase v2 (UM)")); break;     // "Animated_Staircase_Light_v2.h"
+    case PinOwner::UM_Example               : return(F("example (UM)")); break;                   // unspecified usermod
+    case PinOwner::UM_Unspecified           : return(F("usermod (UM)")); break;                   // unspecified usermod
   }
   return(F("other")); // should not happen
 }
