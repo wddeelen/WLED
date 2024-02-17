@@ -1,15 +1,11 @@
 #pragma once
 #include "wled.h"
 
-// Sets the sensor pin default if not set already
-#ifndef USERMOD_ANIMATED_STAIRCASE_LIGHT_V2_SENSOR_PIN_TOP
-#define USERMOD_ANIMATED_STAIRCASE_LIGHT_V2_SENSOR_PIN_TOP 1
+#ifndef USERMOD_ANIMATED_STAIRCASE_V2_TOP_SENSOR_PIN
+#define USERMOD_ANIMATED_STAIRCASE_V2_TOP_SENSOR_PIN 35
 #endif
-#ifndef USERMOD_ANIMATED_STAIRCASE_LIGHT_V2_SENSOR_PIN_BOTTOM
-#define USERMOD_ANIMATED_STAIRCASE_LIGHT_V2_SENSOR_PIN_BOTTOM 4
-#endif
-#ifndef USERMOD_ANIMATED_STAIRCASE_LIGHT_V2_LEDS_PER_STEP
-#define USERMOD_ANIMATED_STAIRCASE_LIGHT_V2_LEDS_PER_STEP = '"25;25;25;25;25;25;25;25;25;25;25;25"'
+#ifndef USERMOD_ANIMATED_STAIRCASE_V2_BOTTOM_SENSOR_PIN
+#define USERMOD_ANIMATED_STAIRCASE_V2_BOTTOM_SENSOR_PIN 36
 #endif
 
 struct AniStairSensor {
@@ -24,11 +20,11 @@ class AniStairCaseLightV2 : public Usermod {
         // Private class members.
         bool initDone = false;
         bool enabled = true;
-        int8_t topSensorPin = USERMOD_ANIMATED_STAIRCASE_LIGHT_V2_SENSOR_PIN_TOP;
-        int8_t bottomSensorPin = USERMOD_ANIMATED_STAIRCASE_LIGHT_V2_SENSOR_PIN_BOTTOM;
+        int8_t topSensorPin = USERMOD_ANIMATED_STAIRCASE_V2_TOP_SENSOR_PIN;
+        int8_t bottomSensorPin = USERMOD_ANIMATED_STAIRCASE_V2_BOTTOM_SENSOR_PIN;
         bool topSensorTriggered = false;
         bool bottomSensorTriggered = false;
-        String ledsPerStep = "";//USERMOD_ANIMATED_STAIRCASE_LIGHT_V2_LEDS_PER_STEP;
+        String ledsPerStep;
         unsigned long currentLoopTime;
         unsigned long lastLoopTime;
         AniStairSensor AniStairSensorTop;
@@ -74,7 +70,7 @@ void AniStairCaseLightV2::setup() {
         Serial.println(F("AniStairCaseLightV2: Allocating top and bottom sensor pins..."));
 
         // Allocate Top Sensor pin
-        if (topSensorPin >= 0 && pinManager.allocatePin(topSensorPin, true, PinOwner::USERMOD_ID_ANIMATED_STAIRCASE_V2)) {
+        if (topSensorPin >= 0 && pinManager.allocatePin(topSensorPin, true, PinOwner::UM_ANIMATED_STAIRCASE_V2)) {
             // Set the pin mode for the Top sensor pin.
             pinMode(topSensorPin, INPUT_PULLUP);
             Serial.print(F("AniStairCaseLightV2: Top sensor pin "));
@@ -82,7 +78,7 @@ void AniStairCaseLightV2::setup() {
             Serial.println(F(" allocated."));
             
             // Allocate Bottom Sensor pin
-            if (bottomSensorPin >= 0 && pinManager.allocatePin(bottomSensorPin, true, PinOwner::USERMOD_ID_ANIMATED_STAIRCASE_V2)) {
+            if (bottomSensorPin >= 0 && pinManager.allocatePin(bottomSensorPin, true, PinOwner::UM_ANIMATED_STAIRCASE_V2)) {
                 // Set the pin mode for the Bottom sensor pin.
                 pinMode(bottomSensorPin, INPUT_PULLUP);
                 Serial.print(F("AniStairCaseLightV2: Bottom sensor pin "));
@@ -239,7 +235,7 @@ void AniStairCaseLightV2::loop() {
     lastLoopTime = currentLoopTime;
 }
 
-String originalString = "10;20;30;40;50;60;70;80;90;100;110;120;130;140;";
+String originalString = "";//"10;20;30;40;50;60;70;80;90;100;110;120;130;140;";
 int intArray[0];
 std::vector<int> intVector;
 
@@ -388,14 +384,14 @@ bool AniStairCaseLightV2::readFromConfig(JsonObject &root) {
         // Check if there are changes in parameters from the settings page
         if (newTopSensorPin != topSensorPin || newBottomSensorPin != bottomSensorPin || newLedsPerStep != ledsPerStep) {
             // Deallocate top sensor pin
-            pinManager.deallocatePin(topSensorPin, PinOwner::USERMOD_ID_ANIMATED_STAIRCASE_V2);
+            pinManager.deallocatePin(topSensorPin, PinOwner::UM_ANIMATED_STAIRCASE_V2);
             Serial.print(F("AniStairCaseLightV2: Top sensor pin "));
             Serial.print(topSensorPin);
             Serial.println(F(" deallocated."));
             topSensorPin = newTopSensorPin;
 
             // Deallocate bottom sensor pin
-            pinManager.deallocatePin(bottomSensorPin, PinOwner::USERMOD_ID_ANIMATED_STAIRCASE_V2);
+            pinManager.deallocatePin(bottomSensorPin, PinOwner::UM_ANIMATED_STAIRCASE_V2);
             Serial.print(F("AniStairCaseLightV2: Bottom sensor pin "));
             Serial.print(bottomSensorPin);
             Serial.println(F(" deallocated."));
