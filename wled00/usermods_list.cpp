@@ -185,6 +185,10 @@
 #include "../usermods/LDR_Dusk_Dawn_v2/usermod_LDR_Dusk_Dawn_v2.h"
 #endif
 
+#ifdef USERMOD_ANIMATED_STAIRCASE_V2
+  #include "../usermods/Animated_Staircase_Light_v2/Animated_Staircase_Light_v2.h"
+#endif
+
 //WLEDMM ARTIFX
 #ifdef USERMOD_ARTIFX
 #include "../usermods/artifx/usermod_v2_artifx.h"
@@ -378,6 +382,10 @@ void registerUsermods()
 
 #ifdef USERMOD_LDR_DUSK_DAWN
   usermods.add(new LDR_Dusk_Dawn_v2());
+#endif
+
+#ifdef USERMOD_ANIMATED_STAIRCASE_V2
+  usermods.add(new AniStairCaseLightV2());
 #endif
 
 
