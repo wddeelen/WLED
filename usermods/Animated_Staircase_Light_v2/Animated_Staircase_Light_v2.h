@@ -193,7 +193,40 @@ void AniStairCaseLightV2::loop() {
     
     updateSwipe();
     
-    
+/*
+---------------------------------------------------------------------
+START Code copyed from json.cpp to set the names of a strip segment
+---------------------------------------------------------------------
+
+    if (elem["n"]) {
+    // name field exists
+    if (seg.name) { //clear old name
+      delete[] seg.name;
+      seg.name = nullptr;
+    }
+
+    const char * name = elem["n"].as<const char*>();
+    size_t len = 0;
+    if (name != nullptr) len = strlen(name);
+    if (len > 0 && len < 33) {
+      seg.name = new char[len+1];
+      if (seg.name) strlcpy(seg.name, name, 33);
+    } else {
+      // but is empty (already deleted above)
+      elem.remove("n");
+    }
+  } else if (start != seg.start || stop != seg.stop) {
+    // clearing or setting segment without name field
+    if (seg.name) {
+      delete[] seg.name;
+      seg.name = nullptr;
+    }
+  }
+
+---------------------------------------------------------------------
+END Code copyed from json.cpp to set the names of a strip segment
+---------------------------------------------------------------------
+*/  
     
     
     
