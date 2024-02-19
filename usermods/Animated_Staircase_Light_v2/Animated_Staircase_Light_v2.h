@@ -4,8 +4,21 @@
 #ifndef USERMOD_ANIMATED_STAIRCASE_V2_TOP_SENSOR_PIN
 #define USERMOD_ANIMATED_STAIRCASE_V2_TOP_SENSOR_PIN 35
 #endif
+
 #ifndef USERMOD_ANIMATED_STAIRCASE_V2_BOTTOM_SENSOR_PIN
 #define USERMOD_ANIMATED_STAIRCASE_V2_BOTTOM_SENSOR_PIN 36
+#endif
+
+#ifndef USERMOD_ANIMATED_STAIRCASE_V2_TURN_STEPS_OF_AFTER_MS
+#define USERMOD_ANIMATED_STAIRCASE_V2_TURN_STEPS_OF_AFTER_MS 5000
+#endif
+
+#ifndef USERMOD_ANIMATED_STAIRCASE_V2_TIME_BETWEEN_EACH_STEP_MS
+#define USERMOD_ANIMATED_STAIRCASE_V2_TIME_BETWEEN_EACH_STEP_MS 250
+#endif
+
+#ifndef USERMOD_ANIMATED_STAIRCASE_V2_TRANSITION_TIME_MS
+#define USERMOD_ANIMATED_STAIRCASE_V2_TRANSITION_TIME_MS 250
 #endif
 
 struct AniStairSensor {
@@ -22,7 +35,11 @@ class AniStairCaseLightV2 : public Usermod {
         bool enabled = true;
         int8_t topSensorPin = USERMOD_ANIMATED_STAIRCASE_V2_TOP_SENSOR_PIN;
         int8_t bottomSensorPin = USERMOD_ANIMATED_STAIRCASE_V2_BOTTOM_SENSOR_PIN;
+        int turnStepsOfAfterMs = USERMOD_ANIMATED_STAIRCASE_V2_TURN_STEPS_OF_AFTER_MS;
+        int timeBetweenEachStepMs = USERMOD_ANIMATED_STAIRCASE_V2_TIME_BETWEEN_EACH_STEP_MS;       
+        int transitionTimeMs = USERMOD_ANIMATED_STAIRCASE_V2_TRANSITION_TIME_MS;
         String ledsPerStep;
+       
         
         // Private class members that are used inside this usermod class        
         bool initDone = false;        
@@ -53,8 +70,8 @@ class AniStairCaseLightV2 : public Usermod {
         const unsigned int scanDelay    = 100;      // Time between checking of the sensors
         unsigned long lastSwitchTime    = 0;        // Last time the lights were switched on or off
         bool on                         = false;     // Lights on or off. (Flipping this will start a transition.)
-        unsigned long on_time_ms        = 5000;     // The time for the light to stay on -  TroyHacks: 5s for testing
-        unsigned long segment_delay_ms  = 150;      // Time between switching each segment
+        //unsigned long on_time_ms        = 2500;     // The time for the light to stay on -  TroyHacks: 5s for testing
+        //unsigned long segment_delay_ms  = 200;      // Time between switching each segment
 
         // These values are used by the API to read the last sensor state, or trigger a sensor through the API
         bool bottomSensorRead  = false;
@@ -100,6 +117,9 @@ class AniStairCaseLightV2 : public Usermod {
         static const char _topSensorPin[];
         static const char _bottomSensor[];
         static const char _bottomSensorPin[];
+        static const char _turnStepsOfAfterMs[];
+        static const char _timeBetweenEachStepMs[];
+        static const char _transitionTimeMs[];
         static const char _ledsPerStep[];
         static const int8_t _debounceTime;        
         
@@ -350,43 +370,8 @@ bool AniStairCaseLightV2::checkSensors() {
 }
 
 
-long autoPowerOfflastScanTime=0;
-void AniStairCaseLightV2::autoPowerOff() {  
-
-    if (((millis() - autoPowerOfflastScanTime) > 750) && 1==2) {
-        autoPowerOfflastScanTime = millis();
-
-        debugPrintLn("DEBUG AniStairCaseLightV2::autoPowerOff()");
-
-        debugPrint("millis() = ");
-        debugPrintLn(millis());
-
-        debugPrint("lastSwitchTime = ");
-        debugPrintLn(lastSwitchTime);
-
-        debugPrint("on_time_ms = ");
-        debugPrintLn(on_time_ms);
-
-        debugPrint("(millis() - lastSwitchTime) = ");
-        debugPrintLn((millis() - lastSwitchTime));
-
-        debugPrint("((millis() - lastSwitchTime) > on_time_ms) = ");
-        debugPrintLn(((millis() - lastSwitchTime) > on_time_ms));
-
-        debugPrint("bottomSensorState = ");
-        debugPrintLn(bottomSensorState);
-
-        debugPrint("topSensorState = ");
-        debugPrintLn(topSensorState);
-
-        debugPrintLn("-----------------------------------------------------");
-
-    }
-   
-
-
-
-    if ((millis() - lastSwitchTime) > on_time_ms) {
+void AniStairCaseLightV2::autoPowerOff() {
+    if ((millis() - lastSwitchTime) > turnStepsOfAfterMs) {
         // if sensors are still on, do nothing
         //if (bottomSensorState || topSensorState) return;
         
@@ -407,7 +392,7 @@ void AniStairCaseLightV2::autoPowerOff() {
 
 void AniStairCaseLightV2::updateSwipe() {
     //debugPrintLn("DEBUG AniStairCaseLightV2::updateSwipe()");
-    if ((millis() - lastTime) > segment_delay_ms) {
+    if ((millis() - lastTime) > timeBetweenEachStepMs) {
         lastTime = millis();
         
         byte oldOn  = onIndex;
@@ -431,10 +416,19 @@ void AniStairCaseLightV2::updateSwipe() {
 
 void AniStairCaseLightV2::updateSegments() {
     //debugPrintLn("DEBUG AniStairCaseLightV2::updateSegments()");
+
+    if (transitionTimeMs > 0) {
+        fadeTransition = true;
+    } else {
+        fadeTransition = true;
+    }
+    strip.setTransition(transitionTimeMs);
+
     for (int i = minSegmentId; i < maxSegmentId; i++) {
         Segment &seg = strip.getSegment(i);
         if (!seg.isActive()) continue; // skip gaps
         
+       
         if (i >= onIndex && i < offIndex) {
             seg.setOption(SEG_OPTION_ON, true);
             // We may need to copy mode and colors from segment 0 to make sure
@@ -486,6 +480,7 @@ void AniStairCaseLightV2::segmentSetup() {
         segment.start = ledsInSegments;
         segment.stop = (ledsInSegments + ledsPerStepVector[i]);
         segment.refreshLightCapabilities();
+        //segment.name = "";
         ledsInSegments += ledsPerStepVector[i];
 
         //segment.setMode(FX_MODE_RANDOM_COLOR, true);
@@ -608,7 +603,6 @@ debugPrintLn(lastIndexOfDelimiter);
 }
 
 void AniStairCaseLightV2::addToJsonState(JsonObject& root) {
-    debugPrintLn("DEBUG AniStairCaseLightV2::addToJsonState()");
     JsonObject jsonObj = root[FPSTR(_name)];
     if (jsonObj.isNull()) jsonObj = root.createNestedObject(FPSTR(_name));
 }
@@ -637,6 +631,9 @@ void AniStairCaseLightV2::addToConfig(JsonObject &root) {
     top[FPSTR(_enabled)] = enabled;
     top[FPSTR(_topSensorPin)] = topSensorPin;
     top[FPSTR(_bottomSensorPin)] = bottomSensorPin;
+    top[FPSTR(_turnStepsOfAfterMs)] = turnStepsOfAfterMs;
+    top[FPSTR(_timeBetweenEachStepMs)] = timeBetweenEachStepMs;
+    top[FPSTR(_transitionTimeMs)] = transitionTimeMs;
     top[FPSTR(_ledsPerStep)] = ledsPerStep;
 
 
@@ -654,24 +651,40 @@ bool AniStairCaseLightV2::readFromConfig(JsonObject &root) {
 
     int8_t newTopSensorPin = topSensorPin;
     int8_t newBottomSensorPin = bottomSensorPin;
-    String newLedsPerStep = ledsPerStep;
+    int newTurnStepsOfAfterMs = turnStepsOfAfterMs;
+    int newTimeBetweenEachStepMs = timeBetweenEachStepMs;
+    int newTransitionTimeMs = transitionTimeMs;
+    String newLedsPerStep = ledsPerStep;    
     
-    enabled = top[FPSTR(_enabled)] | enabled;
+    enabled = top[FPSTR(_enabled)] | enabled;    
     newTopSensorPin = top[FPSTR(_topSensorPin)] | newTopSensorPin;
     newBottomSensorPin = top[FPSTR(_bottomSensorPin)] | newBottomSensorPin;
+    newTurnStepsOfAfterMs = top[FPSTR(_turnStepsOfAfterMs)] | newTurnStepsOfAfterMs;
+    newTimeBetweenEachStepMs = top[FPSTR(_timeBetweenEachStepMs)] | newTimeBetweenEachStepMs;
+    newTransitionTimeMs = top[FPSTR(_transitionTimeMs)] | newTransitionTimeMs;
     newLedsPerStep = top[FPSTR(_ledsPerStep)] | newLedsPerStep;
     
     if (!initDone) {
         // First run: reading from cfg.json
         topSensorPin = newTopSensorPin;
         bottomSensorPin = newBottomSensorPin;
+        turnStepsOfAfterMs = newTurnStepsOfAfterMs;
+        timeBetweenEachStepMs = newTimeBetweenEachStepMs;
+        transitionTimeMs = newTransitionTimeMs;
         ledsPerStep = newLedsPerStep;
         debugPrintLn(F("AniStairCaseLightV2: Config loaded from cfg.json file."));
     } else {
         debugPrintLn(F("AniStairCaseLightV2: Config (re)loaded."));
         
         // Check if there are changes in parameters from the settings page
-        if (newTopSensorPin != topSensorPin || newBottomSensorPin != bottomSensorPin || newLedsPerStep != ledsPerStep) {
+        if (
+               newTopSensorPin != topSensorPin 
+            || newBottomSensorPin != bottomSensorPin 
+            || newTurnStepsOfAfterMs != turnStepsOfAfterMs 
+            || newTimeBetweenEachStepMs != timeBetweenEachStepMs
+            || newTransitionTimeMs != transitionTimeMs
+            || newLedsPerStep != ledsPerStep
+        ) {
             // Deallocate top sensor pin
             pinManager.deallocatePin(topSensorPin, PinOwner::UM_ANIMATED_STAIRCASE_V2);
             debugPrint(F("AniStairCaseLightV2: Top sensor pin "));
@@ -686,6 +699,9 @@ bool AniStairCaseLightV2::readFromConfig(JsonObject &root) {
             debugPrintLn(F(" deallocated."));
             bottomSensorPin = newBottomSensorPin;
 
+            turnStepsOfAfterMs = newTurnStepsOfAfterMs;
+            timeBetweenEachStepMs = newTimeBetweenEachStepMs;
+            transitionTimeMs = newTransitionTimeMs;
             ledsPerStep = newLedsPerStep;             
             
             // Initialise
@@ -703,11 +719,14 @@ void AniStairCaseLightV2::appendConfigData() {
 }
 
 // Strings to reduce flash memory usage (used more than twice)
-const char AniStairCaseLightV2::_name[]             PROGMEM = "AniStaircase";
-const char AniStairCaseLightV2::_enabled[]          PROGMEM = "enabled";
-const char AniStairCaseLightV2::_topSensor[]        PROGMEM = "topSensor";
-const char AniStairCaseLightV2::_topSensorPin[]     PROGMEM = "topSensorpin";
-const char AniStairCaseLightV2::_bottomSensor[]     PROGMEM = "bottomSensor";
-const char AniStairCaseLightV2::_bottomSensorPin[]  PROGMEM = "bottomSensorpin";
-const char AniStairCaseLightV2::_ledsPerStep[]      PROGMEM = "ledsPerStep";
-const int8_t AniStairCaseLightV2::_debounceTime     PROGMEM = 50;
+const char AniStairCaseLightV2::_name[]                     PROGMEM = "AniStaircase";
+const char AniStairCaseLightV2::_enabled[]                  PROGMEM = "enabled";
+const char AniStairCaseLightV2::_topSensor[]                PROGMEM = "topSensor";
+const char AniStairCaseLightV2::_topSensorPin[]             PROGMEM = "topSensorpin";
+const char AniStairCaseLightV2::_bottomSensor[]             PROGMEM = "bottomSensor";
+const char AniStairCaseLightV2::_bottomSensorPin[]          PROGMEM = "bottomSensorpin";
+const char AniStairCaseLightV2::_turnStepsOfAfterMs[]       PROGMEM = "turnStepsOfAfterMs";
+const char AniStairCaseLightV2::_timeBetweenEachStepMs[]    PROGMEM = "timeBetweenEachStepMs";
+const char AniStairCaseLightV2::_transitionTimeMs[]         PROGMEM = "transitionTimeMs";
+const char AniStairCaseLightV2::_ledsPerStep[]              PROGMEM = "ledsPerStep";
+const int8_t AniStairCaseLightV2::_debounceTime             PROGMEM = 50;
