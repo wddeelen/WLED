@@ -1,6 +1,55 @@
 #pragma once
 #include "wled.h"
-#include "Stair.h"
+
+class AJSRO4M {
+    private:
+        uint8_t pinNrTrigger = -1;
+        uint8_t pinNrEcho = -1;
+        long lastPing = -1;
+        long pingDuration = -1;
+        int distance = -1;
+        
+        void Ping() {
+            // Direct stop if one of the pins are lower then 0
+            if (pinNrTrigger < 0 || pinNrEcho < 0) return;
+
+            // Update a ping only after 250 miliseconds
+            if ((millis() - lastPing) > 250) {
+                // Make the trigger pin low for 5 Microseconds.
+                digitalWrite(pinNrTrigger, LOW);
+                delayMicroseconds(5);
+
+                // Trigger the sensor by setting the trigger pin high for 10 microseconds:
+                digitalWrite(pinNrTrigger, HIGH);
+                delayMicroseconds(10);
+                digitalWrite(pinNrTrigger, LOW);
+
+                // Read the echoPin. pulseIn() returns the duration (length of the pulse) in microseconds:
+                pingDuration = pulseIn(pinNrEcho, HIGH);
+
+                // Calculate the distance:
+                distance = rint((pingDuration * 0.034) / 2);
+
+                // Update the last ping time
+                lastPing = millis();
+            }        
+        }; 
+
+    public:
+        AJSRO4M(int8_t _pinNrTrigger, int8_t _pinNrEcho) {
+            pinNrTrigger = _pinNrTrigger;
+            pinNrEcho = _pinNrEcho;
+            if (pinNrTrigger > -1 && pinNrEcho > -1) {
+                pinMode(pinNrTrigger, OUTPUT);
+                pinMode(pinNrEcho, INPUT);
+            }
+        };
+
+        int GetDistance() {
+            Ping();
+            return distance;
+        };
+};
 
 #ifndef USERMOD_ANIMATED_STAIRCASE_V2_TOP_SENSOR_PIN
 #define USERMOD_ANIMATED_STAIRCASE_V2_TOP_SENSOR_PIN 35
@@ -36,11 +85,6 @@ struct AniStairSensor {
 
 class AniStairCaseLightV2 : public Usermod {
     private:
-        Stair stair;
-        
-        
-        
-        
         // Private class members to store the usermod settings in
         bool enabled = true;
         int8_t topSensorPin = USERMOD_ANIMATED_STAIRCASE_V2_TOP_SENSOR_PIN;
@@ -50,17 +94,18 @@ class AniStairCaseLightV2 : public Usermod {
         int transitionTimeMs = USERMOD_ANIMATED_STAIRCASE_V2_TRANSITION_TIME_MS;
         String ledsPerStep = USERMOD_ANIMATED_STAIRCASE_V2_LEDS_PER_STEP;
 
- 
+        AJSRO4M Ajsro4MTop = AJSRO4M(9, 10);
+        AJSRO4M Ajsro4MBottom = AJSRO4M(8, 3);       
         
         // Private class members that are used inside this usermod class        
         bool initDone = false;        
         unsigned long currentLoopTime;
         AniStairSensor AniStairSensorTop;
         AniStairSensor AniStairSensorBottom;
-        //std::vector<int> ledsPerStepVector;
+        std::vector<int> ledsPerStepVector;
 
-        //void stepsSetup();
-        //void SyncSegmentsWithSteps();
+        void stepsSetup();
+        void segmentSetup();
         void debugPrint(String val);
         void debugPrintLn(String val);
         void debugPrint(int val);
@@ -143,13 +188,6 @@ void AniStairCaseLightV2::debugPrint(int val) { debugPrint(String(val)); }
 void AniStairCaseLightV2::debugPrintLn(int val) { debugPrintLn(String(val));}
 
 void AniStairCaseLightV2::setup() {
-    stair = Stair(
-        9, 10,          // Top sensor pins
-        8, 3,           // Bottom sensor pins
-        ledsPerStep     // The leds per steps string from the config
-    );
-    
-    
     // Validate pin numbers and set to -1 if they are not valid.
     if (topSensorPin < 0) topSensorPin = -1;
     if (bottomSensorPin < 0) bottomSensorPin = -1;
@@ -167,7 +205,7 @@ void AniStairCaseLightV2::setup() {
             if (bottomSensorPin >= 0 && pinManager.allocatePin(bottomSensorPin, true, PinOwner::UM_ANIMATED_STAIRCASE_V2)) {
                 // Set the pin mode for the Bottom sensor pin.
                 pinMode(bottomSensorPin, INPUT_PULLUP);
-                ledsPerStep = stair.SetupSteps(ledsPerStep);
+                stepsSetup();
 
             } else {
                 bottomSensorPin = -1;
@@ -214,7 +252,7 @@ void AniStairCaseLightV2::CheckTriggers() {
     TriggeredSensor LastSecondSensorTriggered = SecondSensorTriggered;
     
     // Get the distance from the top sensor
-    int Distance = stair.SensorTop.GetDistance();
+    int Distance = Ajsro4MTop.GetDistance();
     if (Distance >= TopMinDistance && Distance <= TopMaxDistance) {
         //debugPrintLn("Top binnen afstand");
         // Set FirstSensorTriggered to Top if there is nobody on the stairs
@@ -226,7 +264,7 @@ void AniStairCaseLightV2::CheckTriggers() {
     }
 
     // Get the distance from the bottom sensor
-    Distance = stair.SensorBottom.GetDistance();
+    Distance = Ajsro4MBottom.GetDistance();
     if (Distance >= BottomMinDistance && Distance <= BottomMaxDistance) {
         //debugPrintLn("Bottom binnen afstand");
         // Set FirstSensorTriggered to Bottom if there is nobody on the stairs
@@ -300,13 +338,13 @@ void AniStairCaseLightV2::loop() {
     //debugPrintLn(str);
     
     
-    minSegmentId = 0;
-    maxSegmentId = stair.GetStepsSize(); // ledsPerStepVector.size();
+    minSegmentId = 0; // strip.getMainSegmentId();  // it may not be the best idea to start with main segment as it may not be the first one
+    maxSegmentId = ledsPerStepVector.size(); // strip.getLastActiveSegmentId() + 1;
 
     bool currentCheckSensors = checkSensors();
     if (lastCheckSensors == false && currentCheckSensors == true) {
-        if (strip._segments.size() != stair.GetStepsSize()) {
-            stair.SyncStairStepsWithStripSegments();
+        if (strip._segments.size() != ledsPerStepVector.size()) {
+            segmentSetup();
         }        
     }
     autoPowerOff(); //if (on) autoPowerOff();    
@@ -450,8 +488,10 @@ void AniStairCaseLightV2::updateSegments() {
 ===============================================================================================
 */
 
-/*
-void AniStairCaseLightV2::SyncSegmentsWithSteps() {
+void AniStairCaseLightV2::segmentSetup() {
+    // Directs stop if ledsPerStepVector.size() == 0
+    //if (ledsPerStepVector.size() == 0) return;    
+
     // Remove segments from the strip is there are more segments then needed
     if (strip._segments.size() > ledsPerStepVector.size()) {
         
@@ -485,12 +525,10 @@ void AniStairCaseLightV2::SyncSegmentsWithSteps() {
         ledsInSegments += ledsPerStepVector[i];
     }
 }
-*/
 
-/*
 void AniStairCaseLightV2::stepsSetup()
 {
-//    ledsPerStepVector.clear();
+    ledsPerStepVector.clear();
 
     int totalConfiguredLeds = strip.getLengthTotal();
     
@@ -557,7 +595,6 @@ void AniStairCaseLightV2::stepsSetup()
     }
     newLedsPerStep.clear();
 }
-*/
 
 void AniStairCaseLightV2::addToJsonInfo(JsonObject& root) {
     JsonObject user = root["u"];
