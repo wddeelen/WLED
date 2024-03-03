@@ -258,7 +258,7 @@ class I2SSource : public AudioSource {
       }
       
       #if !defined(SOC_I2S_SUPPORTS_APLL)
-        #warning this MCU does not have an APLL high accuracy clock for audio
+        // TEMP OFF WDDEELEN GET ANOIT OF IT.... #warning this MCU does not have an APLL high accuracy clock for audio
         // S3: not supported; S2: supported; C3: not supported
         _config.use_apll = false; // APLL not supported on this MCU
       #endif
@@ -707,7 +707,7 @@ class WM8978Source : public I2SSource {
 
 #if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(4, 2, 0)
 #if !defined(SOC_I2S_SUPPORTS_ADC) && !defined(SOC_I2S_SUPPORTS_ADC_DAC)
-  #warning this MCU does not support analog sound input
+  // TEMP OFF WDDEELEN GET ANOIT OF IT.... #warning this MCU does not support analog sound input
 #endif
 #endif
 
@@ -925,7 +925,7 @@ class SPH0654 : public I2SSource {
       REG_SET_BIT(I2S_TIMING_REG(I2S_NUM_0), BIT(9));
       REG_SET_BIT(I2S_CONF_REG(I2S_NUM_0), I2S_RX_MSB_SHIFT);
 #else
-      #warning FIX ME! Please.
+      // TEMP OFF WDDEELEN GET ANOIT OF IT.... #warning FIX ME! Please.
 #endif
     }
 };

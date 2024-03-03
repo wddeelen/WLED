@@ -185,8 +185,8 @@
 #include "../usermods/LDR_Dusk_Dawn_v2/usermod_LDR_Dusk_Dawn_v2.h"
 #endif
 
-#ifdef USERMOD_ANIMATED_STAIRCASE_V2
-  #include "../usermods/Animated_Staircase_Light_v2/Animated_Staircase_Light_v2.h"
+#ifdef USERMOD_ANISTAIRS
+  #include "../usermods/AniStairs/AniStairs.h"
 #endif
 
 //WLEDMM ARTIFX
@@ -384,8 +384,8 @@ void registerUsermods()
   usermods.add(new LDR_Dusk_Dawn_v2());
 #endif
 
-#ifdef USERMOD_ANIMATED_STAIRCASE_V2
-  usermods.add(new AniStairCaseLightV2());
+#ifdef USERMOD_ANISTAIRS
+  usermods.add(new AniStairs());
 #endif
 
 

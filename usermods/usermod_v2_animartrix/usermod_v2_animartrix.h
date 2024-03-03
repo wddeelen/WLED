@@ -30,7 +30,7 @@
 
 #include <ANIMartRIX.h>
 
-#warning WLEDMM usermod: CC BY-NC 3.0 licensed effects by Stefan Petrick, include this usermod only if you accept the terms!
+// TEMP OFF WDDEELEN GET ANOIT OF IT.... #warning WLEDMM usermod: CC BY-NC 3.0 licensed effects by Stefan Petrick, include this usermod only if you accept the terms!
 //========================================================================================================================
 
 
